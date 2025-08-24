@@ -1,2 +1,212 @@
-# Randria-Nate
-Roulette
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tronpick Access</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+    }
+
+    .login-box, .hash-box {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ffff;
+      width: 320px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #00ffff;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: #1a1a2e;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #00ffff;
+      border: none;
+      border-radius: 5px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00cccc;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ff4444;
+    }
+
+    .signature {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #00ffff;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .hash-box {
+      display: none;
+    }
+
+    .hash-box h1 {
+      color: #00ffff;
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-transform: uppercase;
+    }
+
+    .data-box {
+      background-color: #1a1a2e;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ffff;
+      height: 120px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .data-box div {
+      margin: 6px 0;
+      color: #00ffff;
+      font-weight: bold;
+      word-wrap: break-word;
+      font-size: 14px;
+    }
+
+    #resultBox {
+      margin-top: 15px;
+      background: #0f0c29;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px #00ffff;
+    }
+
+    #resultBox div {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    #drawnNumber {
+      color: #00ffff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Tronpick Access</h2>
+    <input type="text" id="loginID" placeholder="Login ID Tronpick" />
+    <input type="password" id="securityKey" placeholder="Clé security MDP" />
+    <button onclick="validateLogin()">Login</button>
+    <div class="message" id="messageBox"></div>
+  </div>
+
+  <div class="hash-box" id="hashBox">
+    <h1>TRONPICK Roulette Ihany</h1>
+    <div class="data-box">
+      <div id="hashCode">Hash Code: ...</div>
+      <div id="clientSeed">Client Seed: ...</div>
+    </div>
+    <div id="resultBox">
+      <div id="drawnNumber">Numéro tiré: ...</div>
+      <div id="parityResult">Parité: ...</div>
+      <div id="colorResult">Couleur: ...</div>
+      <div id="dozenResult">Douzaine: ...</div>
+    </div>
+  </div>
+
+  <div class="signature">By Nate Randria</div>
+
+  <script>
+    function validateLogin() {
+      const loginID = document.getElementById("loginID").value.trim();
+      const securityKey = document.getElementById("securityKey").value.trim();
+      const messageBox = document.getElementById("messageBox");
+      const hashBox = document.getElementById("hashBox");
+
+      if (loginID === "Randria Nate" && securityKey === "123456") {
+        messageBox.style.color = "#00ff88";
+        messageBox.textContent = "Access granted. Welcome Tronpick!";
+        hashBox.style.display = "block";
+        startHashSeedCycle();
+      } else {
+        messageBox.style.color = "#ff4444";
+        messageBox.textContent = "Access denied. Invalid credentials.";
+        hashBox.style.display = "none";
+      }
+    }
+
+    function generateRandomHex(length) {
+      const chars = "abcdef0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return result;
+    }
+
+    function startHashSeedCycle() {
+      const hashCode = document.getElementById("hashCode");
+      const clientSeed = document.getElementById("clientSeed");
+      const drawnNumber = document.getElementById("drawnNumber");
+      const parityResult = document.getElementById("parityResult");
+      const colorResult = document.getElementById("colorResult");
+      const dozenResult = document.getElementById("dozenResult");
+
+      function updateValues() {
+        hashCode.textContent = "Hash Code: " + generateRandomHex(64);
+        clientSeed.textContent = "Client Seed: " + generateRandomHex(16);
+
+        const number = Math.floor(Math.random() * 37); // 0 to 36
+        drawnNumber.textContent = "Numéro tiré: " + number;
+
+        // Parité
+        parityResult.textContent = "Parité: " + (number === 0 ? "N/A" : number % 2 === 0 ? "Paire" : "Impair");
+
+        // Couleur
+        if (number === 0) {
+          colorResult.textContent = "Couleur: Vert";
+        } else {
+          const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+          colorResult.textContent = "Couleur: " + (redNumbers.includes(number) ? "Rouge" : "Noir");
+        }
+
+        // Douzaine
+        if (number >= 1 && number <= 12) {
+          dozenResult.textContent = "Douzaine: 1ère (1–12)";
+        } else if (number >= 13 && number <= 24) {
+          dozenResult.textContent = "Douzaine: 2ème (13–24)";
+        } else if (number >= 25 && number <= 36) {
+          dozenResult.textContent = "Douzaine: 3ème (25–36)";
+        } else {
+         
